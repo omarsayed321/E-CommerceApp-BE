@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, ParseFilePipe, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, ParseFilePipe, UseInterceptors, UsePipes, ValidationPipe, Query } from '@nestjs/common';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 
@@ -13,7 +13,9 @@ import { IBrand } from 'src/common/interfaces/brand.interface';
 import { Auth } from 'src/common/decorator/auth.decorator';
 
 import { RoleEnum } from 'src/common/enums/user.enum';
-import { UpdateBrandDto, BrandParamsDto } from './dto/update-brand.dto';
+import { UpdateBrandDto, BrandParamsDto, GetAllBrandsDto } from './dto/update-brand.dto';
+import { GetAllBrandsResponse } from './entities/brand.entity';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 import { cloudFileUpload } from 'src/common/utils/multer/cloud.multer.options';
 import { fileValidation } from 'src/common/utils/multer/validation.multer';
@@ -39,13 +41,29 @@ export class BrandController {
   }
 
   @Get()
-  findAll() {
-    return this.brandService.findAll();
+  async findAll(@Query() query: GetAllBrandsDto): Promise<IResponse<GetAllBrandsResponse>>{
+  const result = await this.brandService.findAll(query);
+    return successResponse<GetAllBrandsResponse>({data: {result}});
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.brandService.findOne(+id);
+  @Auth([RoleEnum.admin, RoleEnum.superAdmin])
+  @Get('/archive')
+  async findAllArchives(@Query() query: GetAllBrandsDto): Promise<IResponse<GetAllBrandsResponse>>{
+  const result = await this.brandService.findAll(query, true);
+    return successResponse<GetAllBrandsResponse>({data: {result}});
+  }
+
+  @Get(':brandId')
+  async findOne(@Param() params: BrandParamsDto): Promise<IResponse<{brand: IBrand}>>{
+  const brand = await this.brandService.findOne(params.brandId);
+    return successResponse<{brand: IBrand}>({data:{brand}});
+  }
+
+  @Auth([RoleEnum.admin, RoleEnum.superAdmin])
+  @Get(':brandId/archive')
+  async findOneArchives(@Param() params: BrandParamsDto): Promise<IResponse<{brand: IBrand}>>{
+  const brand = await this.brandService.findOne(params.brandId, true);
+    return successResponse<{brand: IBrand}>({data:{brand}});
   }
 
   @Auth([RoleEnum.admin, RoleEnum.superAdmin])

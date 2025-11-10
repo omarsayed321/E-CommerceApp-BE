@@ -39,8 +39,9 @@ export class UserController {
 
   @Auth([RoleEnum.admin, RoleEnum.user, RoleEnum.superAdmin])
   @Get()
-  profile(@User() user: IUser): IResponse<IUser> {
-    return successResponse<IUser>({ data: user });
+  async profile(@User() user: UserDocument): Promise<IResponse<IUser>> {
+    const profile = await this.userService.profile(user)
+    return successResponse<IUser>({ data: profile });
   }
 
   @Auth([RoleEnum.admin, RoleEnum.user, RoleEnum.superAdmin], TokenEnum.refresh)

@@ -5,12 +5,11 @@ import { TokenService } from 'src/common/utils/security/token.security';
 import { StorageEnum } from 'src/common/enums/multer.enum';
 import { Types } from 'mongoose';
 import { UserRepository } from 'src/DB/repository/user.repository';
-import { Lean } from 'src/DB/repository/database.repository.js';
 import {
   GenderEnum,
   ProviderEnum,
   RoleEnum,
-} from 'src/common/enums/user.enum.js';
+} from 'src/common/enums/user.enum';
 
 @Injectable()
 export class UserService {
@@ -20,8 +19,9 @@ export class UserService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async getProfile(user: UserDocument): Promise<UserDocument> {
-    return user;
+  async profile(user: UserDocument): Promise<UserDocument> {
+    const profile = await this.userRepository.findOne({filter:{_id:user._id}, options:{populate:[{path:"wishlist"}]}}) as UserDocument;  
+    return profile;
   }
 
   async refreshToken(

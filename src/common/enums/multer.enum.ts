@@ -4,7 +4,9 @@ export enum StorageEnum {
 }
 
 export enum FolderEnum {
-  Brand = "Brand",
-  Category = "Category",
+  User = "User",
   Product = "Product",
+  Category = "Category",
+  Brand = "Brand",
+  Coupon = "Coupon",
 }

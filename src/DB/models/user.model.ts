@@ -108,7 +108,9 @@ export class User implements IUser {
   })
   changeCredentialsTime: Date;
 
-    
+  @Prop({type:[{type:Types.ObjectId, ref: "Product"}]})  
+  wishlist?: Types.ObjectId[];
+
   @Virtual()
   otp: OtpDocument[];
 

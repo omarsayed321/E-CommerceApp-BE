@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 import { RoleEnum, ProviderEnum } from 'src/common/enums/user.enum';
 import { GenderEnum } from 'src/common/enums/user.enum';
 import { OtpDocument } from 'src/DB/models/otp.model';
+import { IProduct } from './product.interface';
 
 export interface IUser {
   _id?: Types.ObjectId;
@@ -36,4 +37,6 @@ export interface IUser {
   changeCredentialsTime?: Date;
 
   otp?: OtpDocument[];
+
+  wishList?: Types.ObjectId[] | IProduct[];
 }

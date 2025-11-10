@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 import { resolve } from 'path';
 
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { AuthenticationModule } from './modules/auth/auth.module';
 
@@ -13,6 +12,10 @@ import { UserModule } from './modules/user/user.module';
 import { S3Service } from './common/services/s3.service';
 import { SharedAuthenticationModule } from './common/modules/shared.auth.module';
 import { BrandModule } from './modules/brand/brand.module';
+import { CategoryModule } from './modules/category/category.module';
+import { ProductModule } from './modules/product/product.module';
+import { CartModule } from './modules/cart/cart.module';
+import { CouponModule } from './modules/coupon/coupon.module';
 
 @Module({
   imports: [
@@ -28,10 +31,12 @@ import { BrandModule } from './modules/brand/brand.module';
     AuthenticationModule,
     UserModule,
     BrandModule,
-    // CategoryModule,
-    // ProductModule,
+    CategoryModule,
+    ProductModule,
+    CartModule,
+    CouponModule,
   ],
   controllers: [AppController],
-  providers: [AppService, S3Service],
+  providers: [S3Service],
 })
 export class AppModule {}

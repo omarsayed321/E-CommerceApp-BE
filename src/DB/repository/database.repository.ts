@@ -103,7 +103,13 @@ export abstract class DatabaseRepository< TRawDocument, TDocument = HydratedDocu
       options?: QueryOptions<TDocument> | undefined;
       page?: number | "all";
       size?: number;
-    }): Promise<TDocument[] | [] | Lean<TDocument>[] | any> {
+    }): Promise<{
+        docsCount?: number;
+        limit?: number;
+        pagesCount?: number;
+        currentPage?: number | undefined;
+        result: Array<TDocument | Lean<TDocument>>;
+    }> {
       let docsCount: number | undefined = undefined;
       let pagesCount: number | undefined = undefined;
   
@@ -122,7 +128,7 @@ export abstract class DatabaseRepository< TRawDocument, TDocument = HydratedDocu
         limit:options.limit, 
         pagesCount, 
         currentPage: page !== "all" ? page:undefined, 
-        result
+        result,
       };
     }
   
@@ -181,6 +187,20 @@ export abstract class DatabaseRepository< TRawDocument, TDocument = HydratedDocu
       update?: UpdateQuery<TDocument>;
       options?: QueryOptions<TDocument> | null;
     }): Promise<TDocument | null | Lean<TDocument>> {
+
+      if(Array.isArray(update)){
+        update.push({
+          $set:{
+            __v: { $add: ["$__v", 1] },
+          }
+        });
+        return await this.model.findOneAndUpdate(
+          filter || {},
+          update,
+          options
+        );
+      }
+
       return await this.model.findOneAndUpdate(
         filter,
       { ...update, $inc: { __v: 1 } },
